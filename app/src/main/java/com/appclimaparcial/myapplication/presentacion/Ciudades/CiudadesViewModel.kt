@@ -24,7 +24,7 @@ class CiudadesViewModel(
         when(intencion){
             is CiudadesIntencion.Buscar -> buscar(intencion.nombre)
             is CiudadesIntencion.Seleccionar -> seleccionar(intencion.ciudad)
-            CiudadesIntencion.BuscarGeo -> buscarPorGeolocalizacion() // la nueva función que agregamos
+            is CiudadesIntencion.BuscarGeo -> buscarPorGeolocalizacion(intencion.lat, intencion.lon) // la nueva función que agregamos
         }
     }
 
@@ -45,20 +45,15 @@ class CiudadesViewModel(
         }
     }
 
-    private fun buscarPorGeolocalizacion() {
-        // Aca se consulta la ubicación del dispositivo (Activity / Composable).
-        // El ViewModel no debe acceder directamente a Android location; asumimos que la ubicación será proporcionada por la vista a través de un override
-        // Llamamos al repositorio con coordenadas
+    private fun buscarPorGeolocalizacion(lat: Double, lon: Double) {
         uiState = CiudadesEstado.Cargando
         viewModelScope.launch {
             try {
-                // TODO: reemplazar lat/lon por la ubicación real que la View le pase
-                val lat = -34.61
-                val lon = -58.38
                 val resultados = repositorio.buscarCiudadPorCoords(lat, lon)
                 ciudades = resultados
-                uiState = if (ciudades.isEmpty()) CiudadesEstado.Vacio else CiudadesEstado.Resultado(ciudades)
-            } catch (ex: Exception){
+                uiState = if (ciudades.isEmpty()) CiudadesEstado.Vacio
+                else CiudadesEstado.Resultado(ciudades)
+            } catch (ex: Exception) {
                 uiState = CiudadesEstado.Error(ex.message ?: "error desconocido")
             }
         }

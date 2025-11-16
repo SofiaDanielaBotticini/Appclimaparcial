@@ -6,5 +6,5 @@ sealed class CiudadesIntencion {
 
     data class Buscar(val nombre:String) : CiudadesIntencion()
     data class Seleccionar(val ciudad: Ciudad) : CiudadesIntencion()
-    object BuscarGeo : CiudadesIntencion() // Esto es lo nuevo que se agrega para la geolocalizacion
+    data class BuscarGeo(val lat: Double, val lon: Double) : CiudadesIntencion() // Esto es lo nuevo que se agrega para la geolocalizacion
 }

@@ -29,11 +29,8 @@ fun CiudadesView (
                 onAction(CiudadesIntencion.Buscar(value))
             },
         )
-        Button(onClick = {
-            // pedimos ubicación al host (MainActivity/Composable) para obtener permisos y coordenadas reales
-            onRequestLocation()
-            onAction(CiudadesIntencion.BuscarGeo)
-        }) {
+
+        Button(onClick = { onRequestLocation() }) {
             Text(text = "Buscar por geolocalización")
         }
 

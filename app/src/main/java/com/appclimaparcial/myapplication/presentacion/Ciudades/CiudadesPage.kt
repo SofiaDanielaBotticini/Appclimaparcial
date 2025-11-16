@@ -9,7 +9,9 @@ import com.appclimaparcial.myapplication.router.Enrutador
 
 @Composable
 fun CiudadesPage(
-    navHostController: NavHostController, userPrefs: UserPreferences, onRequestLocation: ()->Unit
+    navHostController: NavHostController,
+    userPrefs: UserPreferences,
+    onRequestLocation: ()->Unit
 ) {
     val viewModel : CiudadesViewModel = viewModel(
         factory = CiudadesViewModelFactory(
