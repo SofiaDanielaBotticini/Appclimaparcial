@@ -1,7 +1,15 @@
 package com.appclimaparcial.myapplication.presentacion.Clima
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.appclimaparcial.myapplication.presentacion.Clima.actual.ClimaView
@@ -13,7 +21,10 @@ import com.appclimaparcial.myapplication.presentacion.Clima.pronostico.Pronostic
 import com.appclimaparcial.myapplication.repository.RepositorioApi
 import com.appclimaparcial.myapplication.repository.UserPreferences
 import com.appclimaparcial.myapplication.router.Enrutador
+import kotlinx.serialization.InternalSerializationApi
+import androidx.compose.material3.Text
 
+@OptIn(InternalSerializationApi::class)
 @Composable
 fun ClimaPage(
     navHostController: NavHostController,
@@ -22,6 +33,11 @@ fun ClimaPage(
     nombre: String,
     userPrefs: UserPreferences
 ) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { TopBar() })
+    { innerPadding ->
+
     val viewModel : ClimaViewModel = viewModel(
         factory = ClimaViewModelFactory(
             repositorio = RepositorioApi(),
@@ -39,7 +55,7 @@ fun ClimaPage(
         )
     )
 
-    Column {
+    Column (modifier = Modifier.padding(innerPadding)){
         ClimaView(
             state = viewModel.uiState,
             onAction = { intencion -> viewModel.ejecutar(intencion) },
@@ -53,4 +69,17 @@ fun ClimaPage(
             }
         )
     }
+}
+}
+@InternalSerializationApi
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar() {
+    CenterAlignedTopAppBar(
+        title = { Text("Aplicacion del clima - Grupo 3")},
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary
+        )
+    )
 }
