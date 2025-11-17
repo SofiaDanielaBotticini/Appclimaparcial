@@ -44,7 +44,7 @@ class CiudadesViewModel(
         }
     }
 
-    private fun buscarPorGeolocalizacion(lat: Double, lon: Double) {
+    private fun buscarPorGeolocalizacion(lat: Float, lon: Float) {
         uiState = CiudadesEstado.Cargando
         viewModelScope.launch {
             try {
@@ -59,8 +59,11 @@ class CiudadesViewModel(
     }
 
     private fun seleccionar(ciudad: Ciudad){
-        userPrefs.saveCiudadSeleccionada(ciudad) // Para que siga funcionando lo de geolocalizacion
-        val ruta = Ruta.Clima(lat = ciudad.lat, lon = ciudad.lon, nombre = ciudad.name
+        userPrefs.saveCiudadSeleccionada(ciudad)
+        val ruta = Ruta.Clima(
+            lat = ciudad.lat,
+            lon = ciudad.lon,
+            nombre = ciudad.name
         )
         router.navegar(ruta)
     }

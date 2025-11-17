@@ -39,7 +39,7 @@ class RepositorioApi : Repositorio {
         }
     }
 
-    override suspend fun buscarCiudadPorCoords(lat: Double, lon: Double): List<Ciudad> {
+    override suspend fun buscarCiudadPorCoords(lat: Float, lon: Float): List<Ciudad> {
         val respuesta = cliente.get("https://api.openweathermap.org/geo/1.0/reverse") {
             parameter("lat", lat)
             parameter("lon", lon)
