@@ -26,7 +26,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.appclimaparcial.myapplication.repository.modelos.DailyTemperature
 import com.appclimaparcial.myapplication.repository.modelos.ListForecast
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
