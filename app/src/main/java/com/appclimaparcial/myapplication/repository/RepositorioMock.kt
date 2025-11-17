@@ -25,11 +25,9 @@ class RepositorioMock  : Repositorio {
     }
 
     override suspend fun traerClima(lat: Float, lon: Float): Clima {
-        TODO("Mock traerClima - implementá datos de prueba si querés")
     }
 
     override suspend fun traerPronostico(nombre: String): List<ListForecast> {
-        TODO("Mock traerPronostico - implementá datos de prueba si querés")
     }
 }
 
