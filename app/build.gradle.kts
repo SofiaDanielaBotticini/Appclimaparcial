@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -65,4 +66,9 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.logging)
     implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation(libs.vico.core)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.views)
+    //implementation(libs.vico.compose.cartesian)
+    implementation(libs.vico.compose)
 }

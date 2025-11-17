@@ -3,29 +3,37 @@ package com.appclimaparcial.myapplication.presentacion.Clima.pronostico
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toUpperCase
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.appclimaparcial.myapplication.repository.modelos.DailyTemperature
 import com.appclimaparcial.myapplication.repository.modelos.ListForecast
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -36,9 +44,7 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PronosticoView(
-    modifier: Modifier = Modifier,
-    state: PronosticoEstado,
-    onAction: (PronosticoIntencion) -> Unit
+    modifier: Modifier = Modifier, state: PronosticoEstado, onAction: (PronosticoIntencion) -> Unit
 ) {
     // Ejecutar actualización cuando vuelve a primer plano
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -50,12 +56,10 @@ fun PronosticoView(
             .fillMaxWidth()
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
+    ) {
         when (state) {
             is PronosticoEstado.Error -> ErrorView(mensaje = state.mensaje)
-            is PronosticoEstado.Exitoso ->
-                PronosticoListaView(climas = state.climas)
+            is PronosticoEstado.Exitoso -> PronosticoListaView(climas = state.climas)
 
             PronosticoEstado.Vacio -> EmptyView()
             PronosticoEstado.Cargando -> LoadingView()
@@ -83,39 +87,59 @@ fun ErrorView(mensaje: String) {
 @Composable
 fun PronosticoListaView(climas: List<ListForecast>) {
     val daysForecast = forecastGraphInfo(climas)
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        items(items = daysForecast) { item ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
-            ) {
-                Text(
-                    text = item.day.uppercase(),
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.labelMedium,
-                    textAlign = TextAlign.Center
-                )
-                Row(Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth()
-                ){
-                    Text(text = "MAX: ${item.temp_max}",style = MaterialTheme.typography.labelMedium,)
-                    Spacer(
-                        modifier = Modifier.width(8.dp)
-                    )
-                    Text(text = "Min: ${item.temp_min}",style = MaterialTheme.typography.labelMedium,)
-                }
+    val modifier: Modifier = Modifier
+
+    val tempMaxSeries = daysForecast.map { it.temp_max }
+    val tempMinSeries = daysForecast.map { it.temp_min }
+
+
+    val modelProducer = remember { CartesianChartModelProducer() }
+    LaunchedEffect(daysForecast) {
+        modelProducer.runTransaction {
+            columnSeries { series(tempMaxSeries) }
+            lineSeries {
+                series(tempMaxSeries)
+                series(tempMinSeries)
             }
         }
     }
+    JetpackComposeBasicComboChart(modelProducer, modifier)
 }
 
-//funciones para procesar el value de dt a fecha y después agrupar la info
+
+// ---------------------------------------------------------------------------------
+// --- FUNCIONES PARA VICO ---
+// ---------------------------------------------------------------------------------
+
+@Composable
+private fun JetpackComposeBasicComboChart(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier = Modifier,
+) {
+    CartesianChartHost(
+        rememberCartesianChart(
+            rememberColumnCartesianLayer(
+                ColumnCartesianLayer.ColumnProvider.series(
+                    rememberLineComponent(fill = fill(Color(0xffffc002)), thickness = 16.dp)
+                )
+            ),
+            rememberLineCartesianLayer(
+                LineCartesianLayer.LineProvider.series(
+                    LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(fill(Color(0xffee2b2b))))
+                )
+            ),
+            startAxis = VerticalAxis.rememberStart(),
+            bottomAxis = HorizontalAxis.rememberBottom(),
+        ),
+        modelProducer,
+        modifier,
+    )
+}
+
+
+// ---------------------------------------------------------------------------------
+// --- FUNCIONES PARA PROCESAR EL dt Y AGRUPAR POR DIA ---
+// ---------------------------------------------------------------------------------
 @RequiresApi(Build.VERSION_CODES.O)
 fun Long.toFormattedDate(pattern: String = "EEE, MMM d"): String {
     // 1. Convert seconds to milliseconds
@@ -125,8 +149,7 @@ fun Long.toFormattedDate(pattern: String = "EEE, MMM d"): String {
     val instant = Instant.ofEpochMilli(epochMilli)
 
     // 3. Define the desired output format and timezone
-    val formatter = DateTimeFormatter.ofPattern(pattern)
-        .withZone(ZoneId.systemDefault())
+    val formatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneId.systemDefault())
         .withLocale(Locale("es", "ES"))
 
     // 4. Format and return the date string
@@ -148,8 +171,6 @@ fun forecastGraphInfo(forecasts: List<ListForecast>): List<DailyTemperature> {
         DailyTemperature(
             day = firstItemDt.toFormattedDate("EEE"),
             temp_max = dailyForecasts.maxOf { it.main.temp },
-            temp_min = dailyForecasts.minOf { it.main.temp }
-        )
-    }
-        .take(5) // 5 días
+            temp_min = dailyForecasts.minOf { it.main.temp })
+    }.take(5) // 5 días
 }
