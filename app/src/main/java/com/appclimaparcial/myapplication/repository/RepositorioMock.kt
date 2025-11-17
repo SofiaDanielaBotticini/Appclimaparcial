@@ -1,4 +1,4 @@
-package com.appclimaparcial.myapplication.repository
+/*package com.appclimaparcial.myapplication.repository
 
 import com.appclimaparcial.myapplication.repository.modelos.Ciudad
 import com.appclimaparcial.myapplication.repository.modelos.Clima
@@ -39,3 +39,4 @@ class RepositorioMockError  : Repositorio {
     override suspend fun traerClima(lat: Float, lon: Float): Clima { throw Exception() }
     override suspend fun traerPronostico(nombre: String): List<ListForecast> { throw Exception() }
 }
+*/

@@ -64,4 +64,5 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.logging)
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 }
