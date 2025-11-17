@@ -29,7 +29,6 @@ class CiudadesViewModel(
     }
 
     private fun buscar( nombre: String){
-
         uiState = CiudadesEstado.Cargando
         viewModelScope.launch {
             try {

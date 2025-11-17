@@ -14,6 +14,7 @@ data class ForecastDTO (
 data class ListForecast(
     val dt: Long,
     val main: MainForecast,
+    val weather: List<WeatherForecast>,
 )
 
 @Serializable
@@ -28,3 +29,17 @@ data class MainForecast(
     val humidity: Long,
     val temp_kf: Double,
 )
+
+@Serializable
+data class WeatherForecast(
+    val main: String,
+    val description: String,
+    val icon: String
+)
+
+data class DailyTemperature(
+    val temp_max: Double,
+    val temp_min: Double,
+    val day: String,
+)
+
