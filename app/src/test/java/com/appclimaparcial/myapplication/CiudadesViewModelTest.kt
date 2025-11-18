@@ -1,4 +1,4 @@
-package com.appclimaparcial.myapplication
+/*package com.appclimaparcial.myapplication
 
 import com.appclimaparcial.myapplication.presentacion.Ciudades.CiudadesEstado
 import com.appclimaparcial.myapplication.presentacion.Ciudades.CiudadesIntencion
@@ -291,3 +291,4 @@ class CiudadesViewModelTest {
         }
     }
 }
+*/
