@@ -59,8 +59,8 @@ class MainActivity : ComponentActivity() {
 
                     val ciudadesViewModel: CiudadesViewModel = viewModel(
                         factory = CiudadesViewModelFactory(
-                            repositorio = RepositorioApi(),   // ← agrega esto
-                            router = Enrutador(navController), // ← agrega esto
+                            repositorio = RepositorioApi(),
+                            router = Enrutador(navController),
                             userPrefs = userPrefs
                         )
                     )
