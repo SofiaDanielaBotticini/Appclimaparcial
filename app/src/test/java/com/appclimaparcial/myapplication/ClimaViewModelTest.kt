@@ -4,14 +4,9 @@ import com.appclimaparcial.myapplication.presentacion.Clima.actual.ClimaEstado
 import com.appclimaparcial.myapplication.presentacion.Clima.actual.ClimaIntencion
 import com.appclimaparcial.myapplication.presentacion.Clima.actual.ClimaViewModel
 import com.appclimaparcial.myapplication.presentacion.Clima.actual.ClimaViewModelFactory
-import com.appclimaparcial.myapplication.repository.Repositorio
-import com.appclimaparcial.myapplication.repository.modelos.Clima
-import com.appclimaparcial.myapplication.repository.modelos.Main
-import com.appclimaparcial.myapplication.repository.modelos.Weather
-import com.appclimaparcial.myapplication.repository.modelos.Ciudad
-import com.appclimaparcial.myapplication.repository.modelos.ListForecast
-import com.appclimaparcial.myapplication.router.Router
-import com.appclimaparcial.myapplication.router.Ruta
+import com.appclimaparcial.myapplication.repository.RepositorioMock
+import com.appclimaparcial.myapplication.repository.RepositorioMockError
+import com.appclimaparcial.myapplication.router.MockRouter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -26,69 +21,9 @@ import org.junit.Test
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-/**
- * Router fake para clima. Por ahora el ViewModel no navega,
- * pero lo dejo armado por si en algún momento lo necesito.
- */
-class RouterFakeClima : Router {
-    var ultimaRuta: Ruta? = null
-    override fun navegar(ruta: Ruta) {
-        ultimaRuta = ruta
-    }
-}
-
-/**
- * Repositorio de prueba que devuelve siempre el mismo clima.
- * Así el test es predecible y no dependemos de nada externo.
- */
-class RepositorioClimaExitoso : Repositorio {
-    override suspend fun buscarCiudad(ciudad: String): List<Ciudad> = emptyList()
-
-    override suspend fun buscarCiudadPorCoords(
-        lat: Float,
-        lon: Float
-    ): List<Ciudad> = emptyList()
-
-    override suspend fun traerClima(lat: Float, lon: Float): Clima {
-        return Clima(
-            name = "Ciudad Test",
-            main = Main(
-                temp = 25.0,
-                feels_like = 27.0
-            ),
-            weather = listOf(
-                Weather(
-                    description = "despejado"
-                )
-            )
-        )
-    }
-
-    override suspend fun traerPronostico(nombre: String): List<ListForecast> = emptyList()
-}
-
-/**
- * Repositorio que tira excepción al traer el clima.
- * Lo uso para testear el estado de Error en el ViewModel.
- */
-class RepositorioClimaError : Repositorio {
-    override suspend fun buscarCiudad(ciudad: String): List<Ciudad> = emptyList()
-
-    override suspend fun buscarCiudadPorCoords(
-        lat: Float,
-        lon: Float
-    ): List<Ciudad> = emptyList()
-
-    override suspend fun traerClima(lat: Float, lon: Float): Clima {
-        throw Exception("fallo al traer clima")
-    }
-
-    override suspend fun traerPronostico(nombre: String): List<ListForecast> = emptyList()
-}
-
 class ClimaViewModelTest {
 
-    // Thread para simular Dispatchers.Main, porque el ViewModel usa viewModelScope en Main.
+    // Como en los tests no hay Main, invento uno para que el ViewModel no explote cuando usa viewModelScope.
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
     @Before
@@ -102,13 +37,13 @@ class ClimaViewModelTest {
         mainThreadSurrogate.close()
     }
 
-    // ---------- Test actualizarClima (caso OK) ----------
-    // Acá pruebo el camino feliz: el repo devuelve datos y el estado es Exitoso.
+    // Caso Ok
+    // Uso RepositorioMock, que devuelve un clima mock fijo.
 
     @Test
-    fun actualizarClima_conRepositorioExitoso_generaEstadoExitoso() = runTest(timeout = 3.seconds) {
-        val repo = RepositorioClimaExitoso()
-        val router = RouterFakeClima()
+    fun actualizarClima_conRepositorioMock_generaEstadoExitoso() = runTest(timeout = 3.seconds) {
+        val repo = RepositorioMock()
+        val router = MockRouter()
 
         val factory = ClimaViewModelFactory(
             repositorio = repo,
@@ -122,13 +57,13 @@ class ClimaViewModelTest {
 
         launch(Dispatchers.Main) {
             viewModel.ejecutar(ClimaIntencion.actualizarClima)
-            // Le doy un rato para que termine el trabajo del ViewModel.
             delay(1.milliseconds)
 
             val estado = viewModel.uiState
             assertTrue(estado is ClimaEstado.Exitoso)
 
             estado as ClimaEstado.Exitoso
+            // Valores de la clase RepositorioMock.
             assertEquals("Ciudad Test", estado.ciudad)
             assertEquals(25.0, estado.temperatura, 0.0)
             assertEquals("despejado", estado.descripcion)
@@ -136,13 +71,13 @@ class ClimaViewModelTest {
         }
     }
 
-    // ---------- Test actualizarClima (caso error) ----------
-    // Acá fuerzo un error en el repo y verifico que el ViewModel quede en estado Error.
+
+    // Uso RepositorioMockError para forzar un fallo y revisar que el estado sea Error.
 
     @Test
-    fun actualizarClima_conErrorEnRepositorio_generaEstadoError() = runTest(timeout = 3.seconds) {
-        val repo = RepositorioClimaError()
-        val router = RouterFakeClima()
+    fun actualizarClima_conRepositorioMockError_generaEstadoError() = runTest(timeout = 3.seconds) {
+        val repo = RepositorioMockError()
+        val router = MockRouter()
 
         val factory = ClimaViewModelFactory(
             repositorio = repo,
@@ -161,7 +96,6 @@ class ClimaViewModelTest {
             val estado = viewModel.uiState
             assertTrue(estado is ClimaEstado.Error)
 
-            // El mensaje puede variar según la excepción, pero al menos no debería venir vacío.
             val mensaje = (estado as ClimaEstado.Error).mensaje
             assertTrue(mensaje.isNotBlank())
         }
