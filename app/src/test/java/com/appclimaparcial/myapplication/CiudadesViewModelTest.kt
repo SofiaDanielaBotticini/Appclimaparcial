@@ -100,9 +100,8 @@ class CiudadesViewModelTest {
         mainThreadSurrogate.close()
     }
 
-    // ---------------------------------------------------
-    // INTENCION: Buscar(nombre)
-    // ---------------------------------------------------
+    // INTENCION para Buscar nombre
+   
 
     @Test
     fun buscar_cor_devuelveCordoba() = runTest(timeout = 3.seconds) {
@@ -210,9 +209,9 @@ class CiudadesViewModelTest {
         }
     }
 
-    // ---------------------------------------------------
-    // INTENCION: CargarRecomendadas
-    // ---------------------------------------------------
+   
+    // Intencion para CargarRecomendadas
+    
 
     @Test
     fun cargarRecomendadas_devuelveEstadoRecomendadas() = runTest(timeout = 3.seconds) {
@@ -224,7 +223,7 @@ class CiudadesViewModelTest {
             assertTrue(estado is CiudadesEstado.Recomendadas)
 
             val ciudadesRecomendadas = (estado as CiudadesEstado.Recomendadas).ciudades
-            // Con el RepositorioMock actual probablemente sea 0, pero como máximo 5
+            // Con el Repo mock acutal puede que sea 0 y como maximo 5
             assertTrue(ciudadesRecomendadas.size <= 5)
         }
     }
@@ -269,9 +268,8 @@ class CiudadesViewModelTest {
         }
     }
 
-    // ---------------------------------------------------
-    // INTENCION: Seleccionar(ciudad)
-    // ---------------------------------------------------
+    // para seleccionar intencion Seleccionar(ciudad)
+  
 
     @Test
     fun seleccionar_ciudad_guardaEnUserPrefsYNavegaAClima() = runTest(timeout = 3.seconds) {
