@@ -1,5 +1,5 @@
 /*package com.appclimaparcial.myapplication
-
+//Mas tests de ciudades
 import com.appclimaparcial.myapplication.presentacion.Ciudades.CiudadesEstado
 import com.appclimaparcial.myapplication.presentacion.Ciudades.CiudadesIntencion
 import com.appclimaparcial.myapplication.presentacion.Ciudades.CiudadesViewModel
