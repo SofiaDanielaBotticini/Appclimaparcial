@@ -1,4 +1,4 @@
-package com.appclimaparcial.myapplication
+/*package com.appclimaparcial.myapplication
 
 import com.appclimaparcial.myapplication.presentacion.Clima.actual.ClimaEstado
 import com.appclimaparcial.myapplication.presentacion.Clima.actual.ClimaIntencion
