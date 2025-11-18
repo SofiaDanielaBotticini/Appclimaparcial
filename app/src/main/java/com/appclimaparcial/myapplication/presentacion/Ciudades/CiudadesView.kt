@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.appclimaparcial.myapplication.repository.modelos.Ciudad
 import kotlinx.serialization.InternalSerializationApi
@@ -43,7 +44,7 @@ fun CiudadesView(
         Column(modifier = modifier.padding(innerPadding)) {
             OutlinedTextField(
                 value = value,
-                label = { Text(text = "Buscar por nombre") },
+                label = { Text(text = "Buscar por nombre...") },
                 placeholder = { Text(text = "Villa luro") },
                 onValueChange = {
                     value = it
@@ -104,10 +105,17 @@ fun ListaDeCiudades(ciudades: List<Ciudad>, modifier: Modifier, onSelect: (Ciuda
 @Composable
 fun TopBar() {
     CenterAlignedTopAppBar(
-        title = { Text("Aplicacion del clima - Grupo 3") },
+        title = {
+            Text(
+                "Aplicación del clima - Grupo 3",
+                style = MaterialTheme.typography.titleLarge, // tamaño más grande
+                fontWeight = FontWeight.Bold,                 // negrita
+                modifier = Modifier.padding(top = 4.dp)        // leve separación
+            )
+        },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     )
 }

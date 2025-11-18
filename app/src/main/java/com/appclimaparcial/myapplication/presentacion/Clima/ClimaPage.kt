@@ -23,6 +23,8 @@ import com.appclimaparcial.myapplication.repository.UserPreferences
 import com.appclimaparcial.myapplication.router.Enrutador
 import kotlinx.serialization.InternalSerializationApi
 import androidx.compose.material3.Text
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 
 @OptIn(InternalSerializationApi::class)
 @Composable
@@ -76,10 +78,17 @@ fun ClimaPage(
 @Composable
 fun TopBar() {
     CenterAlignedTopAppBar(
-        title = { Text("Aplicacion del clima - Grupo 3")},
+        title = {
+            Text(
+                "Aplicación del clima - Grupo 3",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     )
 }
