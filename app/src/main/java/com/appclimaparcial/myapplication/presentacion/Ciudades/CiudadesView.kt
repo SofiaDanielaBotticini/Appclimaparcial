@@ -61,6 +61,7 @@ fun CiudadesView(
                         onAction(CiudadesIntencion.Seleccionar(ciudad))
                     }
                 }
+
                 CiudadesEstado.Cargando -> Text("Cargando...")
 
                 is CiudadesEstado.Error -> Text(state.mensaje)
@@ -70,6 +71,7 @@ fun CiudadesView(
                         onAction(CiudadesIntencion.Seleccionar(it))
                     }
                 }
+
                 CiudadesEstado.Vacio -> Text("No hay resultados")
             }
         }

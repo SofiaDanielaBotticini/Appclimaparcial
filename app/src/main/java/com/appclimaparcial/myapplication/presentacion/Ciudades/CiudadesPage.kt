@@ -12,9 +12,9 @@ import com.appclimaparcial.myapplication.router.Enrutador
 fun CiudadesPage(
     navHostController: NavHostController,
     userPrefs: UserPreferences,
-    onRequestLocation: ()->Unit
+    onRequestLocation: () -> Unit
 ) {
-    val viewModel : CiudadesViewModel = viewModel(
+    val viewModel: CiudadesViewModel = viewModel(
         factory = CiudadesViewModelFactory(
             repositorio = RepositorioApi(),
             router = Enrutador(navHostController),
@@ -29,7 +29,8 @@ fun CiudadesPage(
     CiudadesView(
         state = viewModel.uiState,
         onAction = { intencion ->
-            viewModel.ejecutar(intencion) },
+            viewModel.ejecutar(intencion)
+        },
         onRequestLocation = onRequestLocation
     )
 }

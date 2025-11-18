@@ -14,25 +14,25 @@ import com.appclimaparcial.myapplication.router.Ruta
 import kotlinx.coroutines.launch
 
 class CiudadesViewModel(
-    val repositorio: Repositorio,
-    val router: Router, val userPrefs: UserPreferences
+    val repositorio: Repositorio, val router: Router, val userPrefs: UserPreferences
 ) : ViewModel() {
     var uiState by mutableStateOf<CiudadesEstado>(CiudadesEstado.Vacio)
-    var ciudades : List<Ciudad> = emptyList()
+    var ciudades: List<Ciudad> = emptyList()
 
 
-
-    fun ejecutar(intencion: CiudadesIntencion){
-        when(intencion){
+    fun ejecutar(intencion: CiudadesIntencion) {
+        when (intencion) {
             is CiudadesIntencion.Buscar -> buscar(intencion.nombre)
             is CiudadesIntencion.Seleccionar -> seleccionar(intencion.ciudad)
-            is CiudadesIntencion.BuscarGeo -> buscarPorGeolocalizacion(intencion.lat, intencion.lon) // la nueva función que agregamos
+            is CiudadesIntencion.BuscarGeo -> buscarPorGeolocalizacion(
+                intencion.lat, intencion.lon
+            ) // la nueva función que agregamos
             CiudadesIntencion.CargarRecomendadas -> cargarRecomendadas()
         }
     }
 
 
-    private fun buscar( nombre: String){
+    private fun buscar(nombre: String) {
         uiState = CiudadesEstado.Cargando
         viewModelScope.launch {
             try {
@@ -42,7 +42,7 @@ class CiudadesViewModel(
                 } else {
                     uiState = CiudadesEstado.Resultado(ciudades)
                 }
-            } catch (exeption: Exception){
+            } catch (exeption: Exception) {
                 uiState = CiudadesEstado.Error(exeption.message ?: "error desconocido")
             }
         }
@@ -91,12 +91,10 @@ class CiudadesViewModel(
         }
     }
 
-    private fun seleccionar(ciudad: Ciudad){
+    private fun seleccionar(ciudad: Ciudad) {
         userPrefs.saveCiudadSeleccionada(ciudad)
         val ruta = Ruta.Clima(
-            lat = ciudad.lat,
-            lon = ciudad.lon,
-            nombre = ciudad.name
+            lat = ciudad.lat, lon = ciudad.lon, nombre = ciudad.name
         )
         router.navegar(ruta)
     }
