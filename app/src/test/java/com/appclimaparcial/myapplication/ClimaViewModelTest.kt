@@ -27,8 +27,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 /**
- * Router fake para poder verificar navegación si algún día se usa
- * (por ahora ClimaViewModel no navega, pero lo dejamos preparado).
+ * Router fake para poder verificar navegacion
  */
 class RouterFakeClima : Router {
     var ultimaRuta: Ruta? = null
@@ -39,7 +38,7 @@ class RouterFakeClima : Router {
 
 /**
  * Repositorio que devuelve un clima exitoso fijo,
- * para testear el camino feliz de ClimaViewModel.
+ * para testear caso exitoso de ClimaViewModel.
  */
 class RepositorioClimaExitoso : Repositorio {
 
@@ -51,8 +50,7 @@ class RepositorioClimaExitoso : Repositorio {
     ): List<Ciudad> = emptyList()
 
     override suspend fun traerClima(lat: Float, lon: Float): Clima {
-        // ⚠️ Si la firma de tu data class Clima / Main / Weather no matchea 1:1,
-        // ajustá los parámetros, pero dejá los nombres usados en el ViewModel:
+        // Si la firma de data class  para Clima/Main/Weather no encaja
         //  - name
         //  - main.temp
         //  - main.feels_like
@@ -76,7 +74,7 @@ class RepositorioClimaExitoso : Repositorio {
 
 /**
  * Repositorio que siempre falla al traer el clima,
- * para testear el estado Error.
+ * para testear el error.
  */
 class RepositorioClimaError : Repositorio {
 
@@ -110,10 +108,9 @@ class ClimaViewModelTest {
         mainThreadSurrogate.close()
     }
 
-    // ---------------------------------------------------
-    // INTENCION: ClimaIntencion.actualizarClima
-    // Camino feliz / Exitoso
-    // ---------------------------------------------------
+    
+    // Intencion para ClimaIntencion.actualizarClima
+    // Exitoso
 
     @Test
     fun actualizarClima_conRepositorioExitoso_generaEstadoExitoso() = runTest(timeout = 3.seconds) {
@@ -146,10 +143,9 @@ class ClimaViewModelTest {
         }
     }
 
-    // ---------------------------------------------------
-    // INTENCION: ClimaIntencion.actualizarClima
-    // Camino de error
-    // ---------------------------------------------------
+    
+    // Intencion de ClimaIntencion.actualizarClima
+    // Error
 
     @Test
     fun actualizarClima_conErrorEnRepositorio_generaEstadoError() = runTest(timeout = 3.seconds) {
@@ -173,11 +169,11 @@ class ClimaViewModelTest {
             val estado = viewModel.uiState
             assertTrue(estado is ClimaEstado.Error)
 
-            // El ViewModel usa:
+            //ViewModel para:
             //  exception.localizedMessage ?: "error desconocido"
-            // Así que puede variar el texto. Si querés ser laxo:
             val mensaje = (estado as ClimaEstado.Error).mensaje
             assertTrue(mensaje.isNotBlank())
         }
     }
 }
+*/
