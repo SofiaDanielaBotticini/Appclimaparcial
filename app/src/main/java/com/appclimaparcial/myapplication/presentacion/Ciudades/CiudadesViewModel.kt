@@ -20,13 +20,17 @@ class CiudadesViewModel(
     var uiState by mutableStateOf<CiudadesEstado>(CiudadesEstado.Vacio)
     var ciudades : List<Ciudad> = emptyList()
 
+
+
     fun ejecutar(intencion: CiudadesIntencion){
         when(intencion){
             is CiudadesIntencion.Buscar -> buscar(intencion.nombre)
             is CiudadesIntencion.Seleccionar -> seleccionar(intencion.ciudad)
             is CiudadesIntencion.BuscarGeo -> buscarPorGeolocalizacion(intencion.lat, intencion.lon) // la nueva función que agregamos
+            CiudadesIntencion.CargarRecomendadas -> cargarRecomendadas()
         }
     }
+
 
     private fun buscar( nombre: String){
         uiState = CiudadesEstado.Cargando
@@ -43,6 +47,35 @@ class CiudadesViewModel(
             }
         }
     }
+
+
+    private fun cargarRecomendadas() {
+        viewModelScope.launch {
+            try {
+                // aca se los pasa a la api
+                val ciudadesBase = listOf(
+                    "Villa Luro, AR",
+                    "Caballito, AR",
+                    "Villa Santa Rita, AR",
+                    "La Plata, AR",
+                    "España"
+                )
+
+                val resultados = mutableListOf<Ciudad>()
+
+                for (c in ciudadesBase) {
+                    val lista = repositorio.buscarCiudad(c)
+                    if (lista.isNotEmpty()) resultados.add(lista.first())
+                }
+
+                uiState = CiudadesEstado.Recomendadas(resultados.take(5))
+
+            } catch (e: Exception) {
+                uiState = CiudadesEstado.Error("Error cargando ciudades recomendadas")
+            }
+        }
+    }
+
 
     private fun buscarPorGeolocalizacion(lat: Float, lon: Float) {
         uiState = CiudadesEstado.Cargando

@@ -1,6 +1,7 @@
 package com.appclimaparcial.myapplication.presentacion.Ciudades
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.appclimaparcial.myapplication.repository.RepositorioApi
@@ -20,6 +21,10 @@ fun CiudadesPage(
             userPrefs = userPrefs // para que se guarde la configuración (por eso también el OnRequestLocation)
         )
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.ejecutar(CiudadesIntencion.CargarRecomendadas)
+    }
 
     CiudadesView(
         state = viewModel.uiState,

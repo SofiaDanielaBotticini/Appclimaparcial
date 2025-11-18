@@ -7,4 +7,5 @@ sealed class CiudadesEstado {
     object Cargando: CiudadesEstado()
     data class Resultado(val ciudades: List<Ciudad>) : CiudadesEstado()
     data class Error(val mensaje: String): CiudadesEstado()
+    data class Recomendadas(val ciudades: List<Ciudad>) : CiudadesEstado()
 }

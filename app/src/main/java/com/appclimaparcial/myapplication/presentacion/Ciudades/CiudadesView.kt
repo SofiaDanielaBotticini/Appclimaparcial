@@ -52,15 +52,25 @@ fun CiudadesView(
             }
 
             when (state) {
-                CiudadesEstado.Cargando -> Text(text = "cargando")
-                is CiudadesEstado.Error -> Text(text = state.mensaje)
-                is CiudadesEstado.Resultado -> ListaDeCiudades(state.ciudades) {
-                    onAction(
-                        CiudadesIntencion.Seleccionar(it)
+                is CiudadesEstado.Recomendadas -> {
+                    Text(
+                        "Ciudades recomendadas:",
+                        style = MaterialTheme.typography.titleMedium
                     )
+                    ListaDeCiudades(state.ciudades) { ciudad ->
+                        onAction(CiudadesIntencion.Seleccionar(ciudad))
+                    }
                 }
+                CiudadesEstado.Cargando -> Text("Cargando...")
 
-                CiudadesEstado.Vacio -> Text(text = "No hay resultados")
+                is CiudadesEstado.Error -> Text(state.mensaje)
+
+                is CiudadesEstado.Resultado -> {
+                    ListaDeCiudades(state.ciudades) {
+                        onAction(CiudadesIntencion.Seleccionar(it))
+                    }
+                }
+                CiudadesEstado.Vacio -> Text("No hay resultados")
             }
         }
     }
